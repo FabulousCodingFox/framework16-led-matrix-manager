@@ -4,7 +4,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
-project(framework16-led-matrix-manager VERSION 1.0)
+project(framework16-led-matrix-manager VERSION 0.0.1)
 
 # Source files
 file(GLOB_RECURSE SRCS ${PROJECT_SOURCE_DIR}/src/*.cpp)
@@ -31,22 +31,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${LIBUSB_LIBRARIES})
 # Find and link to spdlog
 find_package(spdlog REQUIRED)
 target_link_libraries(${PROJECT_NAME} PRIVATE spdlog::spdlog)
-add_definitions(-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)
-
-# FFTW
-pkg_check_modules(FFTW3 REQUIRED fftw3)
-target_include_directories(${PROJECT_NAME} PRIVATE ${FFTW3_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${FFTW3_LIBRARIES})
-
-# Alsa
-pkg_check_modules(ALSA REQUIRED alsa)
-target_include_directories(${PROJECT_NAME} PRIVATE ${ALSA_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${ALSA_LIBRARIES})
-
-# Pipewire
-pkg_check_modules(PIPEWIRE REQUIRED libpipewire-0.3)
-target_include_directories(${PROJECT_NAME} PRIVATE ${PIPEWIRE_INCLUDE_DIRS})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PIPEWIRE_LIBRARIES})
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_definitions(-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)
+else()
+    add_definitions(-DSPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_INFO)
+endif()
 
 # Find and link to Qt
 find_package(Qt6 6.8.1 COMPONENTS Core Widgets LinguistTools REQUIRED)

@@ -7,26 +7,100 @@
   },
   "configurePresets": [
     {
-      "name": "Debug",
-      "description": "Debug configuration",
-      "hidden": false,
+      "name": "linux-release",
+      "displayName": "Linux Release",
+      "description": "Release build",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/Debug",
+      "binaryDir": "${sourceDir}/build/linux-release",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_SYSTEM_NAME": "Linux"
+      },
+      "environment": {
+        "QT_QPA_PLATFORM": "wayland"
       }
     },
     {
-      "name": "Release",
-      "description": "Release configuration",
-      "hidden": false,
+      "name": "linux-debug",
+      "displayName": "Linux Debug",
+      "description": "Debug build",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build/Release",
+      "binaryDir": "${sourceDir}/build/linux-debug",
       "cacheVariables": {
-        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
-        "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_SYSTEM_NAME": "Linux"
+      },
+      "environment": {
+        "QT_QPA_PLATFORM": "wayland"
       }
+    },
+    {
+      "name": "windows-release",
+      "displayName": "Windows Release",
+      "description": "Release build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_SYSTEM_NAME": "Windows",
+        "CMAKE_C_COMPILER_FORCED": "ON",
+        "CMAKE_CXX_COMPILER_FORCED": "ON"
+      }
+    },
+    {
+      "name": "windows-debug",
+      "displayName": "Windows Debug",
+      "description": "Debug build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/windows-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "YES",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_SYSTEM_NAME": "Windows",
+        "CMAKE_C_COMPILER_FORCED": "ON",
+        "CMAKE_CXX_COMPILER_FORCED": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "linux-release-build",
+      "configurePreset": "linux-release",
+      "description": "Build Linux Release",
+      "targets": ["all"],
+      "cleanFirst": true
+    },
+    {
+      "name": "linux-debug-build",
+      "configurePreset": "linux-debug",
+      "description": "Build Linux Debug",
+      "targets": ["all"],
+      "cleanFirst": true
+    },
+    {
+      "name": "windows-release-build",
+      "configurePreset": "windows-release",
+      "description": "Build Windows Release",
+      "targets": ["all"],
+      "cleanFirst": true
+    },
+    {
+      "name": "windows-debug-build",
+      "configurePreset": "windows-debug",
+      "description": "Build Windows Debug",
+      "targets": ["all"],
+      "cleanFirst": true
     }
   ]
 }
