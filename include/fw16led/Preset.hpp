@@ -104,7 +104,7 @@ namespace fw16led
           {
             return option.defaultText;
           }
-          else if constexpr (std::is_same_v<T, int> && option.type == PresetOptionType::Dropdown)
+          else if (std::is_same_v<T, int> && option.type == PresetOptionType::Dropdown)
           {
             return option.dropdownOptions[0].key;
           }

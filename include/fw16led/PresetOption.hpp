@@ -22,6 +22,12 @@ namespace fw16led
   {
     int key;
     std::string value;
+
+    DropdownOption(int key, std::string value)
+      : key(key)
+      , value(value)
+    {
+    }
   };
 
   /**
