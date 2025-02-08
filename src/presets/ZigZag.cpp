@@ -10,10 +10,10 @@ namespace fw16led::presets
   constexpr auto DISPLAY_NAME = "ZigZag";
   const auto SETTINGS = std::vector<PresetOptionConfig>{
       PresetOptionConfig{
-        type : PresetOptionType::Checkbox,
-        key : "scroll",
-        label : "Scroll",
-        defaultBool : false,
+          .type = PresetOptionType::Checkbox,
+          .key = "scroll",
+          .label = "Scroll",
+          .defaultBool = false,
       },
   };
 
