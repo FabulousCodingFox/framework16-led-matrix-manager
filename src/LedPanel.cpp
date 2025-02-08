@@ -47,6 +47,15 @@ namespace fw16led
         case PresetOptionType::Checkbox:
           currentPreset->setOptionValue(option.key, settings->value(optionName, option.defaultBool).toBool());
           break;
+        case PresetOptionType::NumberRange:
+          currentPreset->setOptionValue(option.key, settings->value(optionName, option.defaultNumber).toDouble());
+          break;
+        case PresetOptionType::Text:
+          currentPreset->setOptionValue(option.key, settings->value(optionName, QString::fromStdString(option.defaultText)).toString().toStdString());
+          break;
+        case PresetOptionType::Dropdown:
+          currentPreset->setOptionValue(option.key, settings->value(optionName, QString::fromStdString(option.dropdownOptions[0])).toString().toStdString());
+          break;
         }
       }
 

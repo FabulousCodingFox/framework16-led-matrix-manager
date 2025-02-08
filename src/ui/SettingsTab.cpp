@@ -3,9 +3,12 @@
 #include "fw16led/global.hpp"
 #include "fw16led/managers/usb.hpp"
 #include <QCheckBox>
+#include <QDoubleSpinBox>
 #include <QFrame>
 #include <QLabel>
+#include <QLineEdit>
 #include <QOverload>
+#include <QSpinBox>
 
 namespace fw16led::ui
 {
@@ -121,6 +124,22 @@ namespace fw16led::ui
         {
           settings->setValue(controlsSetting, checkbox->isChecked());
         }
+        else if (QLineEdit* textEdit = qobject_cast<QLineEdit*>(widget))
+        {
+          settings->setValue(controlsSetting, textEdit->text());
+        }
+        else if (QComboBox* dropdown = qobject_cast<QComboBox*>(widget))
+        {
+          settings->setValue(controlsSetting, dropdown->currentText());
+        }
+        else if (QSpinBox* spinBox = qobject_cast<QSpinBox*>(widget))
+        {
+          settings->setValue(controlsSetting, spinBox->value());
+        }
+        else if (QDoubleSpinBox* doubleSpinBox = qobject_cast<QDoubleSpinBox*>(widget))
+        {
+          settings->setValue(controlsSetting, doubleSpinBox->value());
+        }
       }
     }
 
@@ -152,22 +171,66 @@ namespace fw16led::ui
       QLabel* label = new QLabel(QString::fromStdString(option.label));
       dynamicSettingsLayout->addWidget(label);
 
+      QString controlsSetting = QString("panel_%1_preset_%2_%3").arg(panelId).arg(presetKey).arg(QString::fromStdString(option.key));
+
       switch (option.type)
       {
       case PresetOptionType::Checkbox:
       {
         QCheckBox* checkbox = new QCheckBox();
-        QString controlsSetting = QString("panel_%1_preset_%2_%3").arg(panelId).arg(presetKey).arg(QString::fromStdString(option.key));
         checkbox->setProperty("controlsSetting", controlsSetting);
         checkbox->setChecked(settings->value(controlsSetting, option.defaultBool).toBool());
         dynamicSettingsLayout->addWidget(checkbox);
         break;
       }
-      default:
+      case PresetOptionType::Text:
+      {
+        QLineEdit* textEdit = new QLineEdit();
+        textEdit->setProperty("controlsSetting", controlsSetting);
+        textEdit->setText(settings->value(controlsSetting, QString::fromStdString(option.defaultText)).toString());
+        dynamicSettingsLayout->addWidget(textEdit);
         break;
       }
-    }
+      case PresetOptionType::Dropdown:
+      {
+        QComboBox* dropdown = new QComboBox();
+        dropdown->setProperty("controlsSetting", controlsSetting);
+        for (const auto& dropdownOption : option.dropdownOptions)
+        {
+          dropdown->addItem(QString::fromStdString(dropdownOption));
+        }
+        QString selectedOption = settings->value(controlsSetting, QString::fromStdString(option.dropdownOptions[0])).toString();
+        int index = dropdown->findText(selectedOption);
+        if (index != -1)
+        {
+          dropdown->setCurrentIndex(index);
+        }
+        dynamicSettingsLayout->addWidget(dropdown);
+        break;
+      }
+      case PresetOptionType::NumberRange:
+      {
+        if (option.isInteger)
+        {
+          QSpinBox* spinBox = new QSpinBox();
+          spinBox->setProperty("controlsSetting", controlsSetting);
+          spinBox->setRange(static_cast<int>(option.minValue), static_cast<int>(option.maxValue));
+          spinBox->setValue(settings->value(controlsSetting, static_cast<int>(option.defaultNumber)).toInt());
+          dynamicSettingsLayout->addWidget(spinBox);
+        }
+        else
+        {
+          QDoubleSpinBox* doubleSpinBox = new QDoubleSpinBox();
+          doubleSpinBox->setProperty("controlsSetting", controlsSetting);
+          doubleSpinBox->setRange(option.minValue, option.maxValue);
+          doubleSpinBox->setValue(settings->value(controlsSetting, option.defaultNumber).toDouble());
+          dynamicSettingsLayout->addWidget(doubleSpinBox);
+        }
+        break;
+      }
+      }
 
-    LOG_TRACE("Updated dynamic settings for preset: {}", presetKey.toStdString());
+      LOG_TRACE("Updated dynamic settings for preset: {}", presetKey.toStdString());
+    }
   }
 } // namespace fw16led::ui
