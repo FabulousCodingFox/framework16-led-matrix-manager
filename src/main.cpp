@@ -1,3 +1,4 @@
+#include "./presets/Gradient.hpp"
 #include "./presets/Off.hpp"
 #include "./presets/ZigZag.hpp"
 #include "Application.hpp"

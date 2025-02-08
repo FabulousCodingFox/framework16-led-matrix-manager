@@ -194,16 +194,15 @@ namespace fw16led::ui
       case PresetOptionType::Dropdown:
       {
         QComboBox* dropdown = new QComboBox();
+        int selected = settings->value(controlsSetting, option.defaultDropdown).toInt();
         dropdown->setProperty("controlsSetting", controlsSetting);
         for (const auto& dropdownOption : option.dropdownOptions)
         {
-          dropdown->addItem(QString::fromStdString(dropdownOption));
-        }
-        QString selectedOption = settings->value(controlsSetting, QString::fromStdString(option.dropdownOptions[0])).toString();
-        int index = dropdown->findText(selectedOption);
-        if (index != -1)
-        {
-          dropdown->setCurrentIndex(index);
+          dropdown->addItem(QString::fromStdString(dropdownOption.value));
+          if (dropdownOption.key == selected)
+          {
+            dropdown->setCurrentIndex(dropdown->count() - 1);
+          }
         }
         dynamicSettingsLayout->addWidget(dropdown);
         break;

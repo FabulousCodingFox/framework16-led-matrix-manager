@@ -73,7 +73,11 @@ namespace fw16led
           }
           else if (option.type == PresetOptionType::Dropdown)
           {
-            return option.dropdownOptions[0];
+            return option.dropdownOptions[0].key;
+          }
+          else if (option.type == PresetOptionType::Checkbox)
+          {
+            return option.defaultBool;
           }
         }
       }
@@ -100,9 +104,13 @@ namespace fw16led
           {
             return option.defaultText;
           }
-          else if constexpr (std::is_same_v<T, std::string> && option.type == PresetOptionType::Dropdown)
+          else if constexpr (std::is_same_v<T, int> && option.type == PresetOptionType::Dropdown)
           {
-            return option.dropdownOptions[0];
+            return option.dropdownOptions[0].key;
+          }
+          else if (std::is_same_v<T, bool> && option.type == PresetOptionType::Checkbox)
+          {
+            return option.defaultBool;
           }
         }
       }
