@@ -29,9 +29,6 @@ namespace fw16led::presets
   {
     this->panel = panel;
 
-    auto scroll = getOptionValue<bool>("scroll");
-    panel->animate(scroll.value());
-
     auto type = getOptionValue<int>("type");
     if (type == 0)
     {
@@ -41,6 +38,9 @@ namespace fw16led::presets
     {
       panel->pattern_double_gradient();
     }
+
+    auto scroll = getOptionValue<bool>("scroll");
+    panel->animate(scroll.value());
 
     timer = new QTimer();
     QObject::connect(timer, &QTimer::timeout, [this]()
