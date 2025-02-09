@@ -1,3 +1,4 @@
+#include "./presets/Clock.hpp"
 #include "./presets/Gradient.hpp"
 #include "./presets/Off.hpp"
 #include "./presets/Text.hpp"
@@ -44,6 +45,7 @@ void init_presets()
   fw16led::presets::ZigZag::registerPreset(preset_registry);
   fw16led::presets::Gradient::registerPreset(preset_registry);
   fw16led::presets::Text::registerPreset(preset_registry);
+  fw16led::presets::Clock::registerPreset(preset_registry);
 }
 
 /**
