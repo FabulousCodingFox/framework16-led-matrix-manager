@@ -10,7 +10,7 @@ namespace fw16led
   /**
    * @brief Enumeration of option types for preset configuration.
    */
-  enum class PresetOptionType : u_int8_t
+  enum class PresetOptionType : uint8_t
   {
     NumberRange = 0, /**< Option that represents a numerical range (e.g., brightness, framerate). */
     Text = 1,        /**< Option that represents a text input. */

@@ -87,6 +87,7 @@ namespace fw16led
     template <typename T>
     std::optional<T> getOptionValue(const std::string& key) const
     {
+      static_assert(std::is_same_v<T, std::string> || std::is_same_v<T, double> || std::is_same_v<T, int> || std::is_same_v<T, bool>, "T can only be string, double, int or bool");
       auto it = configValues_.find(key);
       if (it != configValues_.end())
       {
@@ -96,21 +97,26 @@ namespace fw16led
       {
         if (option.key == key)
         {
-          if constexpr (std::is_same_v<T, double> && option.type == PresetOptionType::NumberRange)
+          switch (option.type)
           {
-            return option.defaultNumber;
-          }
-          else if constexpr (std::is_same_v<T, std::string> && option.type == PresetOptionType::Text)
-          {
-            return option.defaultText;
-          }
-          else if (std::is_same_v<T, int> && option.type == PresetOptionType::Dropdown)
-          {
-            return option.dropdownOptions[0].key;
-          }
-          else if (std::is_same_v<T, bool> && option.type == PresetOptionType::Checkbox)
-          {
-            return option.defaultBool;
+          case PresetOptionType::NumberRange:
+            if constexpr (std::is_same_v<T, double> || std::is_same_v<T, int>)
+              return std::optional<T>(static_cast<T>(option.defaultNumber));
+            break;
+          case PresetOptionType::Text:
+            if constexpr (std::is_same_v<T, std::string>)
+              return std::optional<T>(option.defaultText);
+            break;
+          case PresetOptionType::Dropdown:
+            if constexpr (std::is_same_v<T, int>)
+              return std::optional<T>(option.dropdownOptions[0].key);
+            break;
+          case PresetOptionType::Checkbox:
+            if constexpr (std::is_same_v<T, bool>)
+              return std::optional<T>(option.defaultBool);
+            break;
+          default:
+            break;
           }
         }
       }
