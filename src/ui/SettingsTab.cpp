@@ -109,40 +109,49 @@ namespace fw16led::ui
     settings->setValue(QString("panel_%1_preset").arg(panelId), presetKey);
     settings->setValue(QString("panel_%1_brightness").arg(panelId), brightnessSlider->value());
 
-    // Save dynamic settings
-    for (int i = 0; i < dynamicSettingsLayout->count(); i++)
+    // Recursive function to save dynamic settings
+    std::function<void(QLayout*)> saveSettings = [&](QLayout* layout)
     {
-      QLayoutItem* item = dynamicSettingsLayout->itemAt(i);
-      if (item->widget() == nullptr)
-        continue;
-
-      QWidget* widget = item->widget();
-      if (widget->property("controlsSetting").isValid())
+      for (int i = 0; i < layout->count(); i++)
       {
-        QString controlsSetting = widget->property("controlsSetting").toString();
-        if (QCheckBox* checkbox = qobject_cast<QCheckBox*>(widget))
+        QLayoutItem* item = layout->itemAt(i);
+        if (item->widget())
         {
-          settings->setValue(controlsSetting, checkbox->isChecked());
+          QWidget* widget = item->widget();
+          if (widget->property("controlsSetting").isValid())
+          {
+            QString controlsSetting = widget->property("controlsSetting").toString();
+            if (QCheckBox* checkbox = qobject_cast<QCheckBox*>(widget))
+            {
+              settings->setValue(controlsSetting, checkbox->isChecked());
+            }
+            else if (QLineEdit* textEdit = qobject_cast<QLineEdit*>(widget))
+            {
+              settings->setValue(controlsSetting, textEdit->text());
+            }
+            else if (QComboBox* dropdown = qobject_cast<QComboBox*>(widget))
+            {
+              settings->setValue(controlsSetting, dropdown->currentData().value<int>());
+            }
+            else if (QSpinBox* spinBox = qobject_cast<QSpinBox*>(widget))
+            {
+              settings->setValue(controlsSetting, spinBox->value());
+            }
+            else if (QDoubleSpinBox* doubleSpinBox = qobject_cast<QDoubleSpinBox*>(widget))
+            {
+              settings->setValue(controlsSetting, doubleSpinBox->value());
+            }
+          }
         }
-        else if (QLineEdit* textEdit = qobject_cast<QLineEdit*>(widget))
+        else if (item->layout())
         {
-          settings->setValue(controlsSetting, textEdit->text());
-        }
-        else if (QComboBox* dropdown = qobject_cast<QComboBox*>(widget))
-        {
-          auto selectedKey = dropdown->currentData().value<int>();
-          settings->setValue(controlsSetting, selectedKey);
-        }
-        else if (QSpinBox* spinBox = qobject_cast<QSpinBox*>(widget))
-        {
-          settings->setValue(controlsSetting, spinBox->value());
-        }
-        else if (QDoubleSpinBox* doubleSpinBox = qobject_cast<QDoubleSpinBox*>(widget))
-        {
-          settings->setValue(controlsSetting, doubleSpinBox->value());
+          saveSettings(item->layout());
         }
       }
-    }
+    };
+
+    // Save dynamic settings
+    saveSettings(dynamicSettingsLayout);
 
     usb_manager->applyConfig(panelId);
   }
