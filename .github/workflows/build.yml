@@ -1,0 +1,39 @@
+name: Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  linux-bundle-arx:
+    name: Bundle package with Nix (Arx)
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v20
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Bundle package
+        run: nix bundle .#packages.x86_64-linux.default
+
+      - name: Find output
+        id: find_zip
+        run: |
+          REAL_PATH=$(readlink -f $(find . -type l -name "*-arx"))
+          echo "Resolved path: $REAL_PATH"
+          echo "linux_bundle_arx=$REAL_PATH" >> "$GITHUB_ENV"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-bundle-arx
+          path: ${{ env.linux_bundle_arx }}
+          if-no-files-found: error
