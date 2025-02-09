@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QComboBox>
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QSlider>

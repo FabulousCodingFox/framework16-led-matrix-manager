@@ -169,8 +169,9 @@ namespace fw16led::ui
 
     for (const auto& option : options)
     {
+      QHBoxLayout* tempLayout = new QHBoxLayout();
       QLabel* label = new QLabel(QString::fromStdString(option.label));
-      dynamicSettingsLayout->addWidget(label);
+      tempLayout->addWidget(label);
 
       QString controlsSetting = QString("panel_%1_preset_%2_%3").arg(panelId).arg(presetKey).arg(QString::fromStdString(option.key));
 
@@ -181,7 +182,7 @@ namespace fw16led::ui
         QCheckBox* checkbox = new QCheckBox();
         checkbox->setProperty("controlsSetting", controlsSetting);
         checkbox->setChecked(settings->value(controlsSetting, option.defaultBool).toBool());
-        dynamicSettingsLayout->addWidget(checkbox);
+        tempLayout->addWidget(checkbox);
         break;
       }
       case PresetOptionType::Text:
@@ -189,7 +190,7 @@ namespace fw16led::ui
         QLineEdit* textEdit = new QLineEdit();
         textEdit->setProperty("controlsSetting", controlsSetting);
         textEdit->setText(settings->value(controlsSetting, QString::fromStdString(option.defaultText)).toString());
-        dynamicSettingsLayout->addWidget(textEdit);
+        tempLayout->addWidget(textEdit);
         break;
       }
       case PresetOptionType::Dropdown:
@@ -205,7 +206,7 @@ namespace fw16led::ui
             dropdown->setCurrentIndex(dropdown->count() - 1);
           }
         }
-        dynamicSettingsLayout->addWidget(dropdown);
+        tempLayout->addWidget(dropdown);
         break;
       }
       case PresetOptionType::NumberRange:
@@ -216,7 +217,7 @@ namespace fw16led::ui
           spinBox->setProperty("controlsSetting", controlsSetting);
           spinBox->setRange(static_cast<int>(option.minValue), static_cast<int>(option.maxValue));
           spinBox->setValue(settings->value(controlsSetting, static_cast<int>(option.defaultNumber)).toInt());
-          dynamicSettingsLayout->addWidget(spinBox);
+          tempLayout->addWidget(spinBox);
         }
         else
         {
@@ -224,11 +225,13 @@ namespace fw16led::ui
           doubleSpinBox->setProperty("controlsSetting", controlsSetting);
           doubleSpinBox->setRange(option.minValue, option.maxValue);
           doubleSpinBox->setValue(settings->value(controlsSetting, option.defaultNumber).toDouble());
-          dynamicSettingsLayout->addWidget(doubleSpinBox);
+          tempLayout->addWidget(doubleSpinBox);
         }
         break;
       }
       }
+
+      dynamicSettingsLayout->addLayout(tempLayout);
 
       LOG_TRACE("Updated dynamic settings for preset: {}", presetKey.toStdString());
     }
