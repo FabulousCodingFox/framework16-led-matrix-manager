@@ -19,7 +19,7 @@
       system_packages = nixpkgs.legacyPackages.x86_64-linux;
 
       package_name = "framework16-led-matrix-manager";
-      package_version = "0.0.2";
+      package_version = "0.0.3";
       package_meta = with nixpkgs.lib; {
         description = "GUI tool for Framework16 LED displays";
         license = licenses.boost;
