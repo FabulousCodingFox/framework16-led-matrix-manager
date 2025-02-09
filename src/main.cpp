@@ -41,6 +41,7 @@ void init_presets()
 {
   fw16led::presets::Off::registerPreset(preset_registry);
   fw16led::presets::ZigZag::registerPreset(preset_registry);
+  fw16led::presets::Gradient::registerPreset(preset_registry);
 }
 
 /**
