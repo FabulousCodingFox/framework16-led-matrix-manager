@@ -2,6 +2,7 @@
 
 #include "fw16led/Preset.hpp"
 #include "fw16led/PresetRegistry.hpp"
+#include <QTimer>
 
 namespace fw16led::presets
 {
@@ -17,6 +18,7 @@ namespace fw16led::presets
 
   private:
     std::shared_ptr<ledmatrix::LedMatrix> panel;
+    QTimer* timer;
   };
 
 } // namespace fw16led::presets

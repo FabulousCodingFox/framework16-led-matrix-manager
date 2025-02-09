@@ -37,10 +37,16 @@ namespace fw16led::presets
     {
       panel->pattern_double_gradient();
     }
+
+    timer = new QTimer();
+    QObject::connect(timer, &QTimer::timeout, [this]()
+                     { this->panel->keep_awake(); });
+    timer->start(1000);
   }
 
   void Gradient::exit()
   {
+    delete timer;
   }
 
   std::vector<PresetOptionConfig> Gradient::getOptions() const

@@ -29,10 +29,16 @@ namespace fw16led::presets
 
     auto scroll = getOptionValue<bool>("scroll");
     panel->animate(scroll.value());
+
+    timer = new QTimer();
+    QObject::connect(timer, &QTimer::timeout, [this]()
+                     { this->panel->keep_awake(); });
+    timer->start(1000);
   }
 
   void ZigZag::exit()
   {
+    delete timer;
   }
 
   std::vector<PresetOptionConfig> ZigZag::getOptions() const

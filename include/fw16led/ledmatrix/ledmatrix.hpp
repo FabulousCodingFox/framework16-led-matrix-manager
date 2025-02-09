@@ -169,5 +169,16 @@ namespace fw16led::ledmatrix
       auto res = this->send_command_with_response(Command::Brightness);
       return !res.empty() ? res[0] : 0;
     }
+
+    void set_sleep(bool sleep = true)
+    {
+      LOG_TRACE("Setting sleep mode to {}", sleep);
+      this->send_command(Command::Sleep, {static_cast<uint8_t>(sleep ? 0x01 : 0x00)});
+    }
+
+    inline void keep_awake()
+    {
+      this->set_sleep(false);
+    }
   };
 } // namespace fw16led::ledmatrix
