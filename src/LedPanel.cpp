@@ -54,7 +54,7 @@ namespace fw16led
           currentPreset->setOptionValue(option.key, settings->value(optionName, QString::fromStdString(option.defaultText)).toString().toStdString());
           break;
         case PresetOptionType::Dropdown:
-          currentPreset->setOptionValue(option.key, settings->value(optionName, option.dropdownOptions[0].key).toInt());
+          currentPreset->setOptionValue(option.key, settings->value(optionName, option.defaultDropdown).toInt());
           break;
         }
       }

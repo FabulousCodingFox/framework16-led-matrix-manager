@@ -130,7 +130,8 @@ namespace fw16led::ui
         }
         else if (QComboBox* dropdown = qobject_cast<QComboBox*>(widget))
         {
-          settings->setValue(controlsSetting, dropdown->currentText());
+          auto selectedKey = dropdown->currentData().value<int>();
+          settings->setValue(controlsSetting, selectedKey);
         }
         else if (QSpinBox* spinBox = qobject_cast<QSpinBox*>(widget))
         {
@@ -198,7 +199,7 @@ namespace fw16led::ui
         dropdown->setProperty("controlsSetting", controlsSetting);
         for (const auto& dropdownOption : option.dropdownOptions)
         {
-          dropdown->addItem(QString::fromStdString(dropdownOption.value));
+          dropdown->addItem(QString::fromStdString(dropdownOption.value), dropdownOption.key);
           if (dropdownOption.key == selected)
           {
             dropdown->setCurrentIndex(dropdown->count() - 1);
