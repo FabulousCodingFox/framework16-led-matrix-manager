@@ -17,6 +17,7 @@ namespace fw16led::presets
               DropdownOption(0, "Simple"),
               DropdownOption(1, "Double")},
           .defaultDropdown = 0},
+      PresetOptionConfig{.type = PresetOptionType::Checkbox, .key = "scroll", .label = "Scroll", .defaultBool = false},
   };
 
   Gradient::Gradient()
@@ -27,6 +28,9 @@ namespace fw16led::presets
   void Gradient::init(std::shared_ptr<ledmatrix::LedMatrix> panel)
   {
     this->panel = panel;
+
+    auto scroll = getOptionValue<bool>("scroll");
+    panel->animate(scroll.value());
 
     auto type = getOptionValue<int>("type");
     if (type == 0)
