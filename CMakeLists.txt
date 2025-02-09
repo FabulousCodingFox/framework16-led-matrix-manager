@@ -57,3 +57,12 @@ qt_generate_deploy_app_script(
 install(SCRIPT ${deploy_script})
 qt6_wrap_cpp(MOC_SRCS ${HDRS})
 target_sources(${PROJECT_NAME} PRIVATE ${MOC_SRCS})
+
+# Package output
+include(CPack)
+add_custom_command(TARGET ${PROJECT_NAME}
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E echo "Running CPack..."
+    COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_BINARY_DIR} cpack -G ZIP
+    COMMENT "Generating ZIP package with CPack"
+)

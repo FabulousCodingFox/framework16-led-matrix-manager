@@ -1,0 +1,46 @@
+name: Build Linux Release
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Check out the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Install Nix with flakes support
+      - name: Install Nix
+        uses: cachix/install-nix-action@v20
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      # Step 3: Build the package using Nix
+      - name: Build package with Nix
+        run: nix build .#packages.x86_64-linux.default
+
+      # Step 4: Resolve symlink and locate zip file
+      - name: Resolve symlink and find ZIP file
+        id: find_zip
+        run: |
+          REAL_PATH=$(readlink -f result)  # Resolve the symlink
+          echo "Resolved path: $REAL_PATH"
+          
+          ZIP_FILE=$(find "$REAL_PATH/bin/linux-release" -maxdepth 1 -type f -name "*.zip" | head -n 1)
+          
+          if [[ -z "$ZIP_FILE" ]]; then
+            echo "Error: No zip file found in $REAL_PATH/linux-release"
+            exit 1
+          fi
+          
+          echo "zip_file=$ZIP_FILE" >> "$GITHUB_ENV"
+
+      # Step 5: Upload only the zip file as an artifact
+      - name: Upload zip artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-release-zip
+          path: ${{ env.zip_file }}
