@@ -47,14 +47,11 @@ namespace fw16led::ledmatrix
     // Send the data via bulk OUT transfer
     int actual_length = 0;
     int ret = libusb_bulk_transfer(device.get(), ENDPOINT_OUT, outData.data(), static_cast<int>(outData.size()), &actual_length, TRANSFER_TIMEOUT_MS);
-    if (ret != LIBUSB_SUCCESS)
+    if (ret != LIBUSB_SUCCESS || actual_length != static_cast<int>(outData.size()))
     {
-      LOG_WARN("Bulk OUT transfer failed: {}", libusb_strerror(static_cast<libusb_error>(ret)));
-    }
-
-    if (actual_length != static_cast<int>(outData.size()))
-    {
-      LOG_WARN("Bulk OUT transfer size does not match. Expected {}; Got {}", outData.size(), actual_length);
+      LOG_WARN("Bulk OUT transfer failed or size mismatch: {}", libusb_strerror(static_cast<libusb_error>(ret)));
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      return send_command(command, parameters);
     }
   }
 
@@ -72,15 +69,11 @@ namespace fw16led::ledmatrix
     // Send the data via bulk OUT transfer
     int actual_length = 0;
     int ret = libusb_bulk_transfer(device.get(), ENDPOINT_OUT, outData.data(), static_cast<int>(outData.size()), &actual_length, TRANSFER_TIMEOUT_MS);
-    if (ret != LIBUSB_SUCCESS)
+    if (ret != LIBUSB_SUCCESS || actual_length != static_cast<int>(outData.size()))
     {
-      LOG_WARN("Bulk OUT transfer failed: {}", libusb_strerror(static_cast<libusb_error>(ret)));
-      return {};
-    }
-
-    if (actual_length != static_cast<int>(outData.size()))
-    {
-      LOG_WARN("Bulk OUT transfer size does not match. Expected {}; Got {}", outData.size(), actual_length);
+      LOG_WARN("Bulk OUT transfer failed or size mismatch: {}", libusb_strerror(static_cast<libusb_error>(ret)));
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      return send_command_with_response(command, parameters);
     }
 
     std::vector<uint8_t> inData(RESPONSE_SIZE, 0);
@@ -90,7 +83,8 @@ namespace fw16led::ledmatrix
     if (ret != LIBUSB_SUCCESS)
     {
       LOG_WARN("Bulk IN transfer failed: {}", libusb_strerror(static_cast<libusb_error>(ret)));
-      return {};
+      std::this_thread::sleep_for(std::chrono::milliseconds(100));
+      return send_command_with_response(command, parameters);
     }
 
     // Shrink the buffer to the actual number of bytes read

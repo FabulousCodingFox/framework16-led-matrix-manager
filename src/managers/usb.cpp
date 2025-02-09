@@ -81,26 +81,6 @@ namespace fw16led::managers
 
             LOG_DEBUG("-> Successfully claimed interface 1");
 
-            // Wait for the device to be ready
-            bool ready = false;
-            std::vector<uint8_t> dummy = {0x32, 0xAC, 0x00, 0x00};
-            while (!ready)
-            {
-              int actual_length = 0;
-              int ret = libusb_bulk_transfer(handle, 0x01, dummy.data(), 4, &actual_length, 100);
-              if (ret == LIBUSB_SUCCESS && actual_length == 4)
-              {
-                ready = true;
-              }
-              else
-              {
-                LOG_WARN("-> Waiting for device to be ready...");
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-              }
-            }
-
-            LOG_DEBUG("-> Device is ready");
-
             // Store the handle
             ledpanels.push_back(std::make_shared<LedPanel>(std::make_shared<ledmatrix::LedMatrix>(handle)));
           }
