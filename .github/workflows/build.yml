@@ -32,7 +32,7 @@ jobs:
           echo "linux_bundle_arx=$REAL_PATH" >> "$GITHUB_ENV"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: linux-bundle-arx
           path: ${{ env.linux_bundle_arx }}
